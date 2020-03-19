@@ -11,7 +11,7 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190125095113-2b29687e15f2
 	github.com/aws/aws-sdk-go v1.13.8
-	github.com/coreos/etcd v3.2.13+incompatible
+	github.com/coreos/etcd v3.3.19+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/emicklei/go-restful v2.9.0+incompatible // indirect
 	github.com/go-ini/ini v1.42.0 // indirect
