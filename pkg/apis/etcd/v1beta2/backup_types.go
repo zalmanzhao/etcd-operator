@@ -39,6 +39,11 @@ const (
 	BackupStorageTypeOSS                         BackupStorageType = "OSS"
 	AlibabaCloudSecretCredentialsAccessKeyID                       = "accessKeyID"
 	AlibabaCloudSecretCredentialsAccessKeySecret                   = "accessKeySecret"
+
+	// Huawei Cloud OBS related consts
+	BackupStorageTypeOBS                         BackupStorageType = "OBS"
+	HuaweiCloudSecretCredentialsAccessKeyID                       = "accessKeyID"
+	HuaweiCloudSecretCredentialsAccessKeySecret                   = "accessKeySecret"
 )
 
 type BackupStorageType string
@@ -97,6 +102,8 @@ type BackupSource struct {
 	GCS *GCSBackupSource `json:"gcs,omitempty"`
 	// OSS defines the OSS backup source spec.
 	OSS *OSSBackupSource `json:"oss,omitempty"`
+	// OBS defines the OSS backup source spec.
+	OBS *OBSBackupSource `json:"obs,omitempty"`
 }
 
 // BackupPolicy defines backup policy.
@@ -212,5 +219,35 @@ type OSSBackupSource struct {
 	//
 	// Details about regions and endpoints, see:
 	//  https://www.alibabacloud.com/help/doc-detail/31837.htm
+	Endpoint string `json:"endpoint,omitempty"`
+}
+
+// OSBSBackupSource provides the spec how to store backups on OBS.
+type OBSBackupSource struct {
+	// Path is the full abs path where the backup is saved.
+	// The format of the path must be: "<obs-bucket-name>/<path-to-backup-file>"
+	// e.g: "mybucket/etcd.backup"
+	Path string `json:"path"`
+
+	// The name of the secret object that stores the credential which will be used
+	// to access HuaWei Cloud OBS.
+	//
+	// The secret must contain the following keys/fields:
+	//     accessKeyID
+	//     accessKeySecret
+	//
+	// The format of secret:
+	//
+	//   apiVersion: v1
+	//   kind: Secret
+	//   metadata:
+	//     name: <my-credential-name>
+	//   type: Opaque
+	//   data:
+	//     accessKeyID: <base64 of my-access-key-id>
+	//     accessKeySecret: <base64 of my-access-key-secret>
+	//
+	OBSSecret string `json:"obsSecret"`
+
 	Endpoint string `json:"endpoint,omitempty"`
 }

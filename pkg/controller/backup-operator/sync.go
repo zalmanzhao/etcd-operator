@@ -339,6 +339,13 @@ func (b *Backup) handleBackup(parentContext *context.Context, spec *api.BackupSp
 			return nil, err
 		}
 		return bs, nil
+	case api.BackupStorageTypeOBS:
+		bs, err := handleOBS(ctx, b.kubecli, spec.OBS, spec.EtcdEndpoints, spec.ClientTLSSecret,
+			namespace, isPeriodic, backupMaxCount)
+		if err != nil {
+			return nil, err
+		}
+		return bs, nil
 	default:
 		logrus.Fatalf("unknown StorageType: %v", spec.StorageType)
 	}
