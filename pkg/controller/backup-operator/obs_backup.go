@@ -25,11 +25,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// handleOSS saves etcd cluster's backup to specificed OSS path.
+// handleOBS saves etcd cluster's backup to specificed OBS path.
 func handleOBS(ctx context.Context, kubecli kubernetes.Interface, s *api.OBSBackupSource, endpoints []string, clientTLSSecret,
 	namespace string, isPeriodic bool, maxBackup int) (*api.BackupStatus, error) {
 	if s.Endpoint == "" {
-		s.Endpoint = "http://oss-cn-hangzhou.aliyuncs.com"
+		s.Endpoint = "obs.cn-east-2.myhuaweicloud.com"
 	}
 	// TODO: controls NewClientFromSecret with ctx. This depends on upstream kubernetes to support API calls with ctx.
 	cli, err := obsfactory.NewClientFromSecret(kubecli, namespace, s.Endpoint, s.OBSSecret)

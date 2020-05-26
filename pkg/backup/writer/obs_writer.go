@@ -43,15 +43,10 @@ func (obsw *obsWriter) Write(ctx context.Context, path string, r io.Reader) (int
 	}
 
 	// If bucket doesn't exist, we create it.
-	_, err = obsw.obs.GetBucketStorageInfo(bk)
+	_, err = obsw.obs.HeadBucket(bk)
 	if err != nil {
-		input := &obs.CreateBucketInput{}
-		input.Bucket = bk
-		if _, err = obsw.obs.CreateBucket(input); err != nil {
-			return 0, fmt.Errorf("failed to create bucket, error: %v", err)
-		}
+		return 0, err
 	}
-
 
 	input := &obs.PutObjectInput{}
 	input.Bucket = bk
@@ -80,6 +75,7 @@ func (obsw *obsWriter) List(ctx context.Context, basePath string) ([]string, err
 	}
 
 	i := &obs.ListObjectsInput{}
+	i.Bucket = bk
 	i.Marker = ""
 	i.Prefix = key
 	i.MaxKeys = 1000

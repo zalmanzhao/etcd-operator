@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/coreos/etcd-operator/pkg/util/huaweicloudutil/obsfactory"
 	"io"
 	"net/http"
 
@@ -158,6 +159,23 @@ func (r *Restore) serveBackup(w http.ResponseWriter, req *http.Request) error {
 		}
 
 		backupReader = reader.NewOSSReader(ossCli.OSS)
+		path = ossRestoreSource.Path
+	case api.BackupStorageTypeOBS:
+		restoreSource := cr.Spec.RestoreSource
+		if restoreSource.OBS == nil {
+			return errors.New("empty obs restore source")
+		}
+		ossRestoreSource := restoreSource.OBS
+		if len(ossRestoreSource.OBSSecret) == 0 || len(ossRestoreSource.Path) == 0 {
+			return errors.New("invalid obs restore source field (spec.obs), must specify all required subfields")
+		}
+
+		ossCli, err := obsfactory.NewClientFromSecret(r.kubecli, cr.Namespace, ossRestoreSource.Endpoint, ossRestoreSource.OBSSecret)
+		if err != nil {
+			return fmt.Errorf("failed to create OBS client: %v", err)
+		}
+
+		backupReader = reader.NewOBSReader(ossCli.OBS)
 		path = ossRestoreSource.Path
 	default:
 		return fmt.Errorf("unknown backup storage type (%s) for restore CR (%v)", cr.Spec.BackupStorageType, restoreName)

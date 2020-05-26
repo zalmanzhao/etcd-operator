@@ -17,7 +17,6 @@ package obsfactory
 import (
 	"fmt"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	api "github.com/coreos/etcd-operator/pkg/apis/etcd/v1beta2"
 	obs "github.com/zalmanzhao/huawei-obs-go-sdk"
 
@@ -55,7 +54,7 @@ func NewClientFromSecret(kubecli kubernetes.Interface, namespace, endpoint, obsS
 			api.HuaweiCloudSecretCredentialsAccessKeySecret, obsSecret, namespace)
 	}
 
-	client, err := obs.New(endpoint, string(accessKeyID), string(accessKeySecret))
+	client, err := obs.New(string(accessKeyID), string(accessKeySecret), endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OSS client: %v", err)
 	}
